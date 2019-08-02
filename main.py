@@ -1,76 +1,102 @@
+import copy
 import numpy as np
 import math
+import sys
 
-inf = 10**10
+inf = sys.float_info.max # infinity value max float
 
 def main():
-    # FLOID
     base_matrix = [
-        [0, 7, 5, 3],
-        [7, 0, 7, 600.5],
-        [5, 7, 0, 3],
-        [3, 600.5, 3, 0]
+        [0, 1, inf, 3],
+        [1, 0 ,1, 4],
+        [inf, 1, 0, 4],
+        [3, 4, 4, 0]
     ]
-    matrix_after_floid = algo_floid(base_matrix)
-    print_matrix(matrix_after_floid)
-    absolute_center_node = np.amax(matrix_after_floid, 0)
-    print("Абсолютный центр вершин = {}".format(absolute_center_node))
+    center = AbsoluteCenter(base_matrix, 0)
+    print(center.find_abs_center())
 
-    print()
+class AbsoluteCenter:
+    def __init__(self, matrix, limit=0):
+        self.matrix = matrix
+        self.limit = limit
+        self.matrix_short_dist = None
     
-    # HAKIMI
-    base_matrix = [
-        [0, 7, 5, 3],
-        [7, 0, 7, 600.5],
-        [5, 7, 0, 3],
-        [3, 600.5, 3, 0]
-    ]
-    absolute_center_edges = algo_hakimi(base_matrix, matrix_after_floid)
-    print("Абсолютный центр ребер = {}".format(absolute_center_edges))
-  
+    def _algo_floid(self):
+        if len(self.matrix) != 0:
+            matrix = copy.deepcopy(self.matrix)
+            for k in range(0, len(matrix)):
+                for i in range(0, len(matrix)):
+                    for j in range(0, len(matrix)):
+                        matrix[i][j] = min(matrix[i][j], matrix[i][k] + matrix[k][j])
 
-def print_matrix(matrix):
-    for i in matrix:
-        print(i, end="\n")
+            self.matrix_short_dist = matrix
+        else:
+            raise Exception("Matrix is empty")
 
-def algo_floid(matrix):
-    for k in range(0, len(matrix)):
-        for i in range(0, len(matrix)):
-            for j in range(0, len(matrix)):
-                matrix[i][j] = min(matrix[i][j], matrix[i][k] + matrix[k][j])
-    return matrix
+    def _find_abs_node_centers(self):
+        '''
+        Returns list with potential node centers
+        '''
 
-def algo_hakimi(matrix, matrix_floid):
-    arr_min_rib = []
-    for k in range(0, len(matrix)):
-        for i in range(k, len(matrix)):
-            if (i == k or matrix[k][i] == inf) :
-                continue
+        if self.matrix_short_dist is None:
+            self._algo_floid()
+        return list(np.amax(self.matrix_short_dist, 0))
 
-            max_len_rib = -1
-            for f in np.arange(0.1, 1, 0.1):
-                for j in range(0, len(matrix)):
-                    if (j == k or i == j ) :
-                        continue
+    def _find_abs_edge_centers(self):
+        '''
+        Returns array of edge centers
+        as [(edge_length, shift_from_first_node, index_first_node, index_second_node)]
+        '''
 
-                    current_min = min(f * matrix[k][i] + matrix_floid[k][j], (1 - f) * matrix[k][i] +  matrix_floid[i][j])
-                    
-                    if (max_len_rib < current_min):
-                        max_len_rib = current_min
+        if self.matrix_short_dist is None:
+            self._algo_floid()
 
-            arr_min_rib.append(max_len_rib)
-    return arr_min_rib
+        arr_min_rib = []
+        edge_koef = 0
 
+        for k in range(0, len(self.matrix)):
+            for i in range(k, len(self.matrix)):
+                if (i == k or self.matrix[k][i] == inf) :
+                    continue
+
+                min_len_ribs = inf
+                for f in np.arange(0.1, 1, 0.1):
+                    max_len_rib = -1
+                    for j in range(0, len(self.matrix)):
+   
+                        current_min = min(f * self.matrix[k][i] + self.matrix_short_dist[k][j], (1 - f) * self.matrix[k][i] +  self.matrix_short_dist[i][j])
+                        
+                        if (max_len_rib < current_min):
+                            max_len_rib = current_min
+
+                    if (min_len_ribs > max_len_rib):
+                        min_len_ribs = max_len_rib
+                        edge_koef = f * self.matrix[k][i]
+
+                arr_min_rib.append((min_len_ribs, edge_koef, k, i))
+        return arr_min_rib
+    
+    def find_abs_center(self):
+        '''
+        Find absolute centers
+        '''
+        edges = self._find_abs_edge_centers()
+        nodes = self._find_abs_node_centers()
+
+        if (self.limit <= 0):
+            eps = 10**(-7)
+            min_node = min(nodes)
+            min_edge = min(edges, key=lambda x: x[0])
+
+            if min_node < min_edge[0]:
+                return {'nodes': [(i, x) for i, x in enumerate(nodes) if math.fabs(x-min_node) < eps]}
+            else:
+                return {'edges': [x for i, x in enumerate(edges) if math.fabs(x[0]-min_edge[0]) < eps]}
+        else: 
+            return {
+                'nodes': [(i, x) for i, x in enumerate(nodes) if x <= self.limit], 
+                'edges': [x for i, x in enumerate(edges) if x[0] <= self.limit],
+            }
 
 if __name__ == '__main__':
     main()
-
-
-
-   # m = [
-    #     [0,   1,   inf, 8,   6],
-    #     [1,   0,   inf, inf, 5],
-    #     [inf, inf, 0,   3,   7],
-    #     [8,   inf, 3,   0,   1],
-    #     [6,   5,   7,   1,   0]
-    # ]
