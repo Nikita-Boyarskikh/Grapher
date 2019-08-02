@@ -1,2 +1,4 @@
+python3-pip
+python3.7-dev
 pyqt5-dev-tools
 qttools5-dev-tools
