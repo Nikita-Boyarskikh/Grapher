@@ -6,12 +6,6 @@ import sys
 inf = sys.float_info.max # infinity value max float
 
 def main():
-    # base_matrix = [
-    #     [0, 1, inf, 3],
-    #     [1, 0 ,1, 4],
-    #     [inf, 1, 0, 4],
-    #     [3, 4, 4, 0]
-    # ]
     base_matrix = [
         [[0], [8,1], [inf], [5]],
         [[8,1], [0], [8], [2,3]],
