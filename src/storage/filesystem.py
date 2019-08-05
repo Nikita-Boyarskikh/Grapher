@@ -1,27 +1,36 @@
-import json
 from functools import partial
 
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
 from storage import StorageBase
+from storage.exceptions import StorageError
 
 _ = partial(QApplication.translate, 'FileSystemStorageMixin')
 
 
 class FileSystemStorage(StorageBase):
-    def __init__(self, parent=None):
+    def __init__(self, parent, serializer):
         super().__init__(parent)
+        self.serializer = serializer
         self.extension = '.graph'
         self.fileFilter = _('Graph (*{})'.format(self.extension))
         self.file_path = None
 
     def _read(self):
-        with open(self.file_path, 'r') as file:
-            self.data = json.load(file)
+        try:
+            with open(self.file_path, 'r') as file:
+                self.serializer.deserialize(file.read())
+                self.data = self.serializer.data
+        except IOError as e:
+            raise StorageError(msg=str(e))
 
     def _write(self):
-        with open(self.file_path, 'w') as file:
-            json.dump(self.data, file)
+        try:
+            with open(self.file_path, 'w') as file:
+                self.serializer.data = self.data
+                file.write(self.serializer.serialize())
+        except IOError as e:
+            raise StorageError(msg=str(e))
 
     def _getSaveFileName(self, caption):
         self.file_path, name = QFileDialog.getSaveFileName(None, caption, filter=self.fileFilter)

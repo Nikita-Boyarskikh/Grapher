@@ -4,7 +4,7 @@ from PyQt5.QtCore import pyqtSignal, QObject, QMetaObject
 class StorageBase(QObject):
     openChanged = pyqtSignal(bool)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         super().__init__(parent)
         self.data = None
         self.opened = False
