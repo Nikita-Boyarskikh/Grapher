@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from data import Node, Edge, Result, Graph, EdgeWithPoint
+from data import Node, Edge, Result, Graph
 from serializer.exceptions import NodeNotFound, EdgeNotFound, SerializerError
 from utils import throw, find
 
@@ -94,7 +94,7 @@ class Serializer:
         start_node = self._find_node(start_node_id)
         end_node = self._find_node(end_node_id)
         offset = edge.get('offset')
-        return EdgeWithPoint(id_, start_node, end_node, weight, offset=offset)
+        return Edge(id_, start_node, end_node, weight, offset=offset)
 
     def deserialize_result(self, result):
         score = self._get_or_raise(result, 'Result', 'score')
@@ -120,7 +120,7 @@ class Serializer:
         results_list = self._get_or_raise(obj, 'Json', 'results')
         self._assert(isinstance(results_list, list), 'Results must be an array')
 
-        self.data = Graph([], [], [])
+        self.data = Graph()
         for node in nodes_list:
             self.data.nodes.append(self.deserialize_node(node))
 

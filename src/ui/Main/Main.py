@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file './src/ui/main/Main.ui'
+# Form implementation generated from reading ui file './src/ui/Main/Main.ui'
 #
 # Created by: PyQt5 UI code generator 5.10.1
 #
@@ -13,7 +13,9 @@ class Ui_Main(object):
         Main.setObjectName("Main")
         Main.resize(808, 579)
         self.graphicsView = QtWidgets.QGraphicsView(Main)
-        self.graphicsView.setEnabled(False)
+        self.graphicsView.setEnabled(True)
+        self.graphicsView.setMouseTracking(True)
+        self.graphicsView.setLineWidth(1)
         self.graphicsView.setObjectName("graphicsView")
         self.menuBar = QtWidgets.QMenuBar(Main)
         self.menuBar.setGeometry(QtCore.QRect(0, 0, 808, 22))

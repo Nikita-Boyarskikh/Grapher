@@ -27,18 +27,19 @@ class Main(QMainWindow):
     def setupUi(self):
         self.ui.setupUi(self)
         self.setCentralWidget(self.ui.graphicsView)
-        self.ui.graphicsView.setAcceptDrops(True)
         self.ui.graphicsView.setScene(self.scene)
+
+    def resizeEvent(self, event):
+        margins = self.ui.graphicsView.contentsMargins()
+        window_width = event.size().width() - margins.left() - margins.right()
+        window_height = event.size().height() - self.ui.menuBar.size().height() - margins.top() - margins.bottom()
+        self.scene.setSceneRect(0, 0, window_width, window_height)
+        super().resizeEvent(event)
 
     def handleError(self, title, msg):
         error_message = QErrorMessage(self)
         error_message.setWindowTitle(_(title))
         error_message.showMessage(_(msg))
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        size = event.size()
-        self.scene.setSceneRect(0, 0, size.w, size.h)
 
     @pyqtSlot(bool)
     def on_storage_openChanged(self, opened):

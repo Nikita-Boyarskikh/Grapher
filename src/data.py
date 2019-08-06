@@ -1,37 +1,33 @@
-from collections import namedtuple
+from dataclasses import dataclass, field
+from typing import Union, Optional
 
 
-Node = namedtuple('Node', [
-    'id',
-    'name',
-    'x',
-    'y',
-    'weight'
-])
+@dataclass
+class Node:
+    id: int
+    name: str
+    x: int
+    y: int
+    weight: int
 
 
-Edge = namedtuple('Edge', [
-    'id',
-    'start_node',
-    'end_node',
-    'weight'
-])
+@dataclass
+class Edge:
+    id: int
+    start_node: Node
+    end_node: Node
+    weight: int
+    offset: Optional[int] = None
 
 
-Result = namedtuple('Result', [
-    'target',  # Node or EdgeWithPoint
-    'score'
-])
+@dataclass
+class Result:
+    target: Union[Node, Edge]
+    score: int
 
 
-Graph = namedtuple('Graph', [
-    'nodes',
-    'edges',
-    'results'
-])
-
-
-class EdgeWithPoint(Edge):
-    def __init__(self, *args, offset=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.offset = offset  # from start node
+@dataclass
+class Graph:
+    nodes: list = field(default_factory=list)
+    edges: list = field(default_factory=list)
+    results: list = field(default_factory=list)

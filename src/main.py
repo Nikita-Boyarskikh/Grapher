@@ -4,7 +4,7 @@ import sys
 from PyQt5.QtCore import QTranslator, QLocale, QLibraryInfo
 from PyQt5.QtWidgets import QApplication
 
-from ui.main import Main
+from ui.Main import Main
 
 if __name__ == '__main__':
     # create application

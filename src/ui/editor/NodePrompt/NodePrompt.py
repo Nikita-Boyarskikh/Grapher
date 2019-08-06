@@ -1,0 +1,90 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file './src/ui/editor/NodePrompt/NodePrompt.ui'
+#
+# Created by: PyQt5 UI code generator 5.10.1
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+class Ui_NodePrompt(object):
+    def setupUi(self, NodePrompt):
+        NodePrompt.setObjectName("NodePrompt")
+        NodePrompt.resize(400, 300)
+        self.verticalLayoutWidget = QtWidgets.QWidget(NodePrompt)
+        self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 20, 381, 221))
+        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.titleLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.titleLabel.sizePolicy().hasHeightForWidth())
+        self.titleLabel.setSizePolicy(sizePolicy)
+        self.titleLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.titleLabel.setObjectName("titleLabel")
+        self.verticalLayout.addWidget(self.titleLabel)
+        self.formLayout = QtWidgets.QFormLayout()
+        self.formLayout.setObjectName("formLayout")
+        self.nameLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.nameLabel.setObjectName("nameLabel")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.nameLabel)
+        self.nameLineEdit = QtWidgets.QLineEdit(self.verticalLayoutWidget)
+        self.nameLineEdit.setObjectName("nameLineEdit")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.nameLineEdit)
+        self.weightLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.weightLabel.setObjectName("weightLabel")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.weightLabel)
+        self.weightDoubleSpinBox = QtWidgets.QDoubleSpinBox(self.verticalLayoutWidget)
+        self.weightDoubleSpinBox.setObjectName("weightDoubleSpinBox")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.weightDoubleSpinBox)
+        self.colorLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.colorLabel.setObjectName("colorLabel")
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.colorLabel)
+        self.selectColorLayout = QtWidgets.QFormLayout()
+        self.selectColorLayout.setObjectName("selectColorLayout")
+        self.currentColorLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.currentColorLabel.setObjectName("currentColorLabel")
+        self.selectColorLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.currentColorLabel)
+        self.currentColorPushButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.currentColorPushButton.setObjectName("currentColorPushButton")
+        self.selectColorLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.currentColorPushButton)
+        self.formLayout.setLayout(2, QtWidgets.QFormLayout.FieldRole, self.selectColorLayout)
+        self.textColorLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.textColorLabel.setObjectName("textColorLabel")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.textColorLabel)
+        self.selectTextColorLayout = QtWidgets.QFormLayout()
+        self.selectTextColorLayout.setObjectName("selectTextColorLayout")
+        self.currentTextColorLabel = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.currentTextColorLabel.setObjectName("currentTextColorLabel")
+        self.selectTextColorLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.currentTextColorLabel)
+        self.currentTextColorPushButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.currentTextColorPushButton.setObjectName("currentTextColorPushButton")
+        self.selectTextColorLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.currentTextColorPushButton)
+        self.formLayout.setLayout(3, QtWidgets.QFormLayout.FieldRole, self.selectTextColorLayout)
+        self.verticalLayout.addLayout(self.formLayout)
+        self.buttonBox = QtWidgets.QDialogButtonBox(self.verticalLayoutWidget)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.verticalLayout.addWidget(self.buttonBox)
+
+        self.retranslateUi(NodePrompt)
+        QtCore.QMetaObject.connectSlotsByName(NodePrompt)
+
+    def retranslateUi(self, NodePrompt):
+        _translate = QtCore.QCoreApplication.translate
+        NodePrompt.setWindowTitle(_translate("NodePrompt", "Add node"))
+        self.titleLabel.setText(_translate("NodePrompt", "Create node"))
+        self.nameLabel.setText(_translate("NodePrompt", "Name: "))
+        self.weightLabel.setText(_translate("NodePrompt", "Weight: "))
+        self.colorLabel.setText(_translate("NodePrompt", "Color: "))
+        self.currentColorLabel.setText(_translate("NodePrompt", "color"))
+        self.currentColorPushButton.setText(_translate("NodePrompt", "Change color"))
+        self.textColorLabel.setText(_translate("NodePrompt", "Text color: "))
+        self.currentTextColorLabel.setText(_translate("NodePrompt", "color"))
+        self.currentTextColorPushButton.setText(_translate("NodePrompt", "Change color"))
+

@@ -15,7 +15,13 @@
   </property>
   <widget class="QGraphicsView" name="graphicsView">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
+   </property>
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
+   <property name="lineWidth">
+    <number>1</number>
    </property>
   </widget>
   <widget class="QMenuBar" name="menuBar">
