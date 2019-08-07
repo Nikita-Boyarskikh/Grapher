@@ -1,5 +1,7 @@
 from PyQt5.QtCore import pyqtSignal, QObject, QMetaObject
 
+from data import Graph
+
 
 class StorageBase(QObject):
     openChanged = pyqtSignal(bool)
@@ -40,4 +42,5 @@ class StorageBase(QObject):
 
     def new(self):
         self.opened = True
+        self.data = Graph()
         self.emit()

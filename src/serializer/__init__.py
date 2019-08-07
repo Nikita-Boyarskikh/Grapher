@@ -1,4 +1,7 @@
 from collections import defaultdict
+from typing import Optional
+
+from PyQt5.QtGui import QColor
 
 from data import Node, Edge, Result, Graph
 from serializer.exceptions import NodeNotFound, EdgeNotFound, SerializerError
@@ -19,7 +22,10 @@ class Serializer:
 
     @staticmethod
     def _get_or_raise(obj, obj_type, key):
-        return obj.get(key) or throw(SerializerError('{} object must contains key "{}"'.format(obj_type, key)))
+        result = obj.get(key)
+        if result is None:
+            raise SerializerError('{} object must contains key "{}"'.format(obj_type, key))
+        return result
 
     @staticmethod
     def _assert(condition, msg):
@@ -32,19 +38,20 @@ class Serializer:
     def _find_edge(self, edge_id):
         return find(self.data.edges, lambda edge: edge.id == edge_id) or throw(EdgeNotFound(edge_id))
 
-    @staticmethod
-    def serialize_node(node):
+    def serialize_node(self, node: Node) -> dict:
         assert isinstance(node, Node)
         return {
             'id': node.id,
             'name': node.name,
             'x': node.x,
             'y': node.y,
-            'weight': node.weight
+            'weight': node.weight,
+            'color': self.serialize_color(node.color),
+            'textColor': self.serialize_color(node.textColor)
         }
 
     @staticmethod
-    def serialize_edge(edge):
+    def serialize_edge(edge: Edge) -> dict:
         assert isinstance(edge, Edge)
         return {
             'id': edge.id,
@@ -54,7 +61,7 @@ class Serializer:
         }
 
     @staticmethod
-    def serialize_result(result):
+    def serialize_result(result: Result) -> dict:
         assert isinstance(result, Result)
 
         target_is_node = isinstance(result.target, Node)
@@ -63,7 +70,7 @@ class Serializer:
             'score': result.score
         }
 
-    def serialize(self):
+    def serialize(self) -> str:
         assert isinstance(self.data, Graph)
 
         obj = defaultdict(list)
@@ -78,15 +85,26 @@ class Serializer:
 
         return self.obj_to_str(obj)
 
-    def deserialize_node(self, node):
+    @staticmethod
+    def serialize_color(color: Optional[QColor]) -> Optional[str]:
+        if color:
+            return color.name()
+
+    @staticmethod
+    def deserialize_color(color: Optional[str]) -> QColor:
+        return QColor(color)
+
+    def deserialize_node(self, node: dict) -> Node:
         id_ = self._get_or_raise(node, 'Node', 'id')
         name = self._get_or_raise(node, 'Node', 'name')
         x = self._get_or_raise(node, 'Node', 'x')
         y = self._get_or_raise(node, 'Node', 'y')
         weight = self._get_or_raise(node, 'Node', 'weight')
-        return Node(id_, name, x, y, weight)
+        color = self.deserialize_color(node.get('color'))
+        text_color = self.deserialize_color(node.get('textColor'))
+        return Node(id_, name, x, y, weight, color, text_color)
 
-    def deserialize_edge(self, edge):
+    def deserialize_edge(self, edge: dict) -> Edge:
         id_ = self._get_or_raise(edge, 'Edge', 'id')
         start_node_id = self._get_or_raise(edge, 'Edge', 'start_node')
         end_node_id = self._get_or_raise(edge, 'Edge', 'end_node')
@@ -96,7 +114,7 @@ class Serializer:
         offset = edge.get('offset')
         return Edge(id_, start_node, end_node, weight, offset=offset)
 
-    def deserialize_result(self, result):
+    def deserialize_result(self, result: dict) -> Result:
         score = self._get_or_raise(result, 'Result', 'score')
         node_id = result.get('node')
         edge_id = result.get('edge')
@@ -110,14 +128,14 @@ class Serializer:
 
         return Result(target, score)
 
-    def deserialize(self, data):
+    def deserialize(self, data: str) -> None:
         obj = self.str_to_obj(data)
         self._assert(isinstance(obj, dict), 'Json must be an object')
-        nodes_list = self._get_or_raise(obj, 'Json', 'nodes')
+        nodes_list = obj.get('nodes') or []
         self._assert(isinstance(nodes_list, list), 'Nodes must be an array')
-        edges_list = self._get_or_raise(obj, 'Json', 'edges')
+        edges_list = obj.get('edges') or []
         self._assert(isinstance(edges_list, list), 'Edges must be an array')
-        results_list = self._get_or_raise(obj, 'Json', 'results')
+        results_list = obj.get('results') or []
         self._assert(isinstance(results_list, list), 'Results must be an array')
 
         self.data = Graph()

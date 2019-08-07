@@ -32,17 +32,18 @@ class FileSystemStorage(StorageBase):
         except IOError as e:
             raise StorageError(msg=str(e))
 
+    def _check_filename(self):
+        if not self.file_path.endswith(self.extension):
+            self.file_path += self.extension
+        return self.file_path != self.extension
+
     def _getSaveFileName(self, caption):
         self.file_path, name = QFileDialog.getSaveFileName(None, caption, filter=self.fileFilter)
-        if self.file_path:
-            self.file_path += self.extension
-        return self.file_path != ''
+        return self._check_filename()
 
     def _getOpenFileName(self, caption):
         self.file_path, name = QFileDialog.getOpenFileName(None, caption, filter=self.fileFilter)
-        if self.file_path:
-            self.file_path += self.extension
-        return self.file_path != ''
+        return self._check_filename()
 
     def new(self):
         if self._getSaveFileName(_('Create new graph')):

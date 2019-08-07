@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Union, Optional
 
+from PyQt5.QtGui import QColor
+
 
 @dataclass
 class Node:
@@ -9,6 +11,8 @@ class Node:
     x: int
     y: int
     weight: int
+    color: QColor
+    textColor: QColor
 
 
 @dataclass

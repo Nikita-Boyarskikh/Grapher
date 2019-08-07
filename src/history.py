@@ -9,7 +9,7 @@ class History(QObject):
 
     @property
     def clear(self):
-        return False
+        return True
 
     def undo(self):
         pass
