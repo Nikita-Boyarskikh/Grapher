@@ -13,6 +13,7 @@ class Ui_NodePrompt(object):
         NodePrompt.setObjectName("NodePrompt")
         NodePrompt.setWindowModality(QtCore.Qt.WindowModal)
         NodePrompt.resize(400, 230)
+        NodePrompt.setWindowTitle("")
         self.verticalWidget = QtWidgets.QWidget(NodePrompt)
         self.verticalWidget.setGeometry(QtCore.QRect(10, 10, 380, 200))
         self.verticalWidget.setObjectName("verticalWidget")
@@ -25,6 +26,7 @@ class Ui_NodePrompt(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.titleLabel.sizePolicy().hasHeightForWidth())
         self.titleLabel.setSizePolicy(sizePolicy)
+        self.titleLabel.setText("")
         self.titleLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.titleLabel.setObjectName("titleLabel")
         self.verticalLayout.addWidget(self.titleLabel)
@@ -69,8 +71,6 @@ class Ui_NodePrompt(object):
 
     def retranslateUi(self, NodePrompt):
         _translate = QtCore.QCoreApplication.translate
-        NodePrompt.setWindowTitle(_translate("NodePrompt", "Add node"))
-        self.titleLabel.setText(_translate("NodePrompt", "Create node"))
         self.nameLabel.setText(_translate("NodePrompt", "Name: "))
         self.weightLabel.setText(_translate("NodePrompt", "Weight: "))
         self.colorLabel.setText(_translate("NodePrompt", "Color: "))

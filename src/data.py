@@ -8,9 +8,9 @@ from PyQt5.QtGui import QColor
 class Node:
     id: int
     name: str
-    x: int
-    y: int
-    weight: int
+    x: float
+    y: float
+    weight: float
     color: QColor
     textColor: QColor
 
@@ -20,14 +20,15 @@ class Edge:
     id: int
     start_node: Node
     end_node: Node
-    weight: int
-    offset: Optional[int] = None
+    length: float
+    speed: float
+    offset: Optional[float] = None
 
 
 @dataclass
 class Result:
     target: Union[Node, Edge]
-    score: int
+    score: float
 
 
 @dataclass

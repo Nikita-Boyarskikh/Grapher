@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NodePrompt</class>
- <widget class="QDialog" name="NodePrompt">
+ <class>EdgePrompt</class>
+ <widget class="QDialog" name="EdgePrompt">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>Create edge</string>
   </property>
   <widget class="QWidget" name="verticalWidget" native="true">
    <property name="geometry">
@@ -35,7 +35,7 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string/>
+       <string>Create edge</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -48,38 +48,14 @@
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="nameLabel">
+       <widget class="QLabel" name="lengthLabel">
         <property name="text">
-         <string>Name: </string>
+         <string>Length: </string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="nameLineEdit"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="weightLabel">
-        <property name="text">
-         <string>Weight: </string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="weightDoubleSpinBox"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="colorLabel">
-        <property name="text">
-         <string>Color: </string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="textColorLabel">
-        <property name="text">
-         <string>Text color: </string>
-        </property>
-       </widget>
+       <widget class="QDoubleSpinBox" name="lengthDoubleSpinBox"/>
       </item>
       <item row="2" column="1">
        <widget class="QPushButton" name="currentColorPushButton">
@@ -88,10 +64,20 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QPushButton" name="currentTextColorPushButton">
+      <item row="2" column="0">
+       <widget class="QLabel" name="colorLabel">
         <property name="text">
-         <string>Change color</string>
+         <string>Color: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="speedDoubleSpinBox"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="speedLabel">
+        <property name="text">
+         <string>Speed: </string>
         </property>
        </widget>
       </item>
@@ -115,7 +101,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>NodePrompt</receiver>
+   <receiver>EdgePrompt</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -131,7 +117,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>NodePrompt</receiver>
+   <receiver>EdgePrompt</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">

@@ -1,7 +1,7 @@
 from functools import partial
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QMainWindow, QApplication, QErrorMessage, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QErrorMessage, QMessageBox, QInputDialog
 
 from history import History
 from serializer import SerializerError
@@ -43,6 +43,16 @@ class Main(QMainWindow):
                 return True
         return False
 
+    def showLimitDialog(self):
+        limit, ok = QInputDialog.getDouble(
+            self, _('Input limit'), _('Limit: '),
+            value=0.0,
+            min=0.0,
+            decimals=2
+        )
+        if ok:
+            return limit
+
     def closeEvent(self, event):
         event.accept()
         if self.shouldSave():
@@ -57,11 +67,13 @@ class Main(QMainWindow):
 
     @pyqtSlot(bool)
     def on_storage_openChanged(self, opened):
+        # TODO: WAT??? calls twice
         self.ui.graphicsView.setEnabled(opened)
         self.ui.actionSave.setEnabled(opened)
         self.ui.actionSaveAs.setEnabled(opened)
         self.ui.actionClose.setEnabled(opened)
-        self.ui.graphicsView.setAcceptDrops(opened)
+        self.ui.actionFind_absolute_center.setEnabled(opened)
+        self.ui.actionFind_optimal_position.setEnabled(opened)
         self.scene.reset()
         self.scene.setData(self.storage.data)
 
@@ -109,6 +121,24 @@ class Main(QMainWindow):
     @pyqtSlot()
     def on_actionRedo_triggered(self):
         self.history.redo()
+
+    @pyqtSlot()
+    def on_actionFind_absolute_center_triggered(self):
+        limit = self.showLimitDialog()
+        if limit is not None:
+            pass  # TODO
+            # results = findAbsoluteCenter(self.storage.data, limit)
+            # for result in results:
+            #     self.scene.addResult(result)
+
+    @pyqtSlot()
+    def on_actionFind_optimal_position_triggered(self):
+        limit = self.showLimitDialog()
+        if limit is not None:
+            pass  # TODO
+            # results = findOptimalPosition(self.storage.data, limit)
+            # for result in results:
+            #     self.scene.addResult(result)
 
     @pyqtSlot()
     def on_actionAbout_triggered(self):

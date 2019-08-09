@@ -57,7 +57,9 @@ class Serializer:
             'id': edge.id,
             'start_node': edge.start_node.id,
             'end_node': edge.end_node.id,
-            'weight': edge.weight
+            'length': edge.length,
+            'speed': edge.speed,
+            'offset': edge.offset
         }
 
     @staticmethod
@@ -108,11 +110,12 @@ class Serializer:
         id_ = self._get_or_raise(edge, 'Edge', 'id')
         start_node_id = self._get_or_raise(edge, 'Edge', 'start_node')
         end_node_id = self._get_or_raise(edge, 'Edge', 'end_node')
-        weight = self._get_or_raise(edge, 'Edge', 'weight')
+        length = self._get_or_raise(edge, 'Edge', 'length')
+        speed = self._get_or_raise(edge, 'Edge', 'speed')
         start_node = self._find_node(start_node_id)
         end_node = self._find_node(end_node_id)
         offset = edge.get('offset')
-        return Edge(id_, start_node, end_node, weight, offset=offset)
+        return Edge(id_, start_node, end_node, length, speed, offset=offset)
 
     def deserialize_result(self, result: dict) -> Result:
         score = self._get_or_raise(result, 'Result', 'score')

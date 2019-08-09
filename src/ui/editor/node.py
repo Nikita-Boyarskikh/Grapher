@@ -1,18 +1,28 @@
-from PyQt5.QtCore import Qt, QRectF, QLineF, QMimeData, QPoint
-from PyQt5.QtGui import QDrag, QPixmap, QPainter
-from PyQt5.QtWidgets import QGraphicsItem, QApplication
+from functools import partial
 
+from PyQt5.QtCore import Qt, QRectF, QLineF, QMimeData, QPoint, pyqtSignal, QMetaObject
+from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen
+from PyQt5.QtWidgets import QApplication, QGraphicsObject
+
+from data import Node
 from ui.editor import NodePrompt
 
+_ = partial(QApplication.translate, 'Node')
 
-class Node(QGraphicsItem):
+
+class NodeItem(QGraphicsObject):
+    taken = pyqtSignal()
+    selected = pyqtSignal(bool)
     radius = 15
+    borderWidth = 5
     labelHeight = 20
 
-    def __init__(self, parent, node):
+    def __init__(self, parent, node: Node):
         super().__init__(parent)
         self.data = node
-        self.nodePrompt = None
+        self.prompt = None
+        self.isSelected = False
+        self.isTaken = False
 
         self.setupUi()
 
@@ -25,24 +35,31 @@ class Node(QGraphicsItem):
         # BUG: https://bugreports.qt.io/browse/QTBUG-71296
         self.setCursor(Qt.OpenHandCursor)
         self.setAcceptedMouseButtons(Qt.LeftButton | Qt.RightButton)
+        QMetaObject.connectSlotsByName(self.parent())
 
     def boundingRect(self):
-        return QRectF(-self.radius, -self.radius - self.labelHeight, self.diameter, self.diameter + self.labelHeight)
+        return QRectF(
+            -self.radius - self.borderWidth / 2,
+            -self.radius - self.labelHeight,
+            self.diameter + self.borderWidth,
+            self.diameter + self.labelHeight
+        )
 
     def paint(self, painter, style_option_graphics_item, widget=None):
         if self.data.color is not None:
             painter.setBrush(self.data.color)
 
-        if self.data.textColor is not None:
-            painter.setPen(self.data.textColor)
+        if self.isSelected and self.data.textColor:
+            painter.setPen(QPen(self.data.textColor, self.borderWidth))
 
         ellipse_rect = QRectF(-self.radius, -self.radius, self.diameter, self.diameter)
         painter.drawEllipse(ellipse_rect)
+
+        if self.data.textColor is not None:
+            painter.setPen(self.data.textColor)
         painter.drawText(ellipse_rect, Qt.AlignCenter, str(self.data.id))
 
-        if self.data.color is not None:
-            painter.setPen(self.data.color)
-
+        painter.setPen(Qt.black)
         painter.drawText(
             -self.radius,
             -self.radius - self.labelHeight,
@@ -74,27 +91,36 @@ class Node(QGraphicsItem):
         else:
             super().mousePressEvent(event)
 
+    def select(self, selected):
+        if self.isSelected != selected:
+            self.isSelected = selected
+            self.selected.emit(selected)
+            self.update()
+
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.setCursor(Qt.OpenHandCursor)
+            if not self.isTaken:
+                self.select(not self.isSelected)
         elif event.button() == Qt.RightButton:
-            self.nodePrompt = NodePrompt(
+            self.prompt = NodePrompt(
                 parent=self.parentWidget(),
+                title=_('Edit node'),
                 accept=self.accept,
                 name=self.data.name,
                 weight=self.data.weight,
                 color=self.data.color,
                 textColor=self.data.textColor
             )
-            self.nodePrompt.show()
+            self.prompt.show()
         else:
             super().mouseReleaseEvent(event)
 
     def accept(self):
-        self.data.name = self.nodePrompt.name
-        self.data.weight = self.nodePrompt.weight
-        self.data.color = self.nodePrompt.color
-        self.data.textColor = self.nodePrompt.textColor
+        self.data.name = self.prompt.name
+        self.data.weight = self.prompt.weight
+        self.data.color = self.prompt.color
+        self.data.textColor = self.prompt.textColor
         self.update()
 
     def paintOnPixmap(self, pixmap):
@@ -114,6 +140,8 @@ class Node(QGraphicsItem):
 
     def drag(self, widget):
         self.scene().removeItem(self)
+        self.isTaken = False
+
         drag = QDrag(widget)
         mime = QMimeData()
         mime.setProperty('node', self.data)
@@ -127,4 +155,8 @@ class Node(QGraphicsItem):
         drag_distance = QLineF(event.screenPos(), event.buttonDownScreenPos(Qt.LeftButton)).length()
         if drag_distance < QApplication.startDragDistance():
             return
+
+        self.isTaken = True
+        self.select(False)
+        self.taken.emit()
         self.drag(event.widget())

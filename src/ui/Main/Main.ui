@@ -10,6 +10,9 @@
     <height>579</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>Grapher</string>
   </property>
@@ -55,8 +58,16 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuRun">
+    <property name="title">
+     <string>Run</string>
+    </property>
+    <addaction name="actionFind_absolute_center"/>
+    <addaction name="actionFind_optimal_position"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuRun"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionSaveAs">
@@ -116,6 +127,22 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionFind_absolute_center">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Find absolute center</string>
+   </property>
+  </action>
+  <action name="actionFind_optimal_position">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Find optimal position</string>
    </property>
   </action>
  </widget>

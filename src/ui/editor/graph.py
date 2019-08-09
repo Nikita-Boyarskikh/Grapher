@@ -2,10 +2,9 @@ from PyQt5.QtCore import QRectF
 from PyQt5.QtWidgets import QGraphicsItem
 
 
-class Graph(QGraphicsItem):
+class GraphItem(QGraphicsItem):
     def __init__(self):
         super().__init__()
-        self.counter = 0
         self.rect = QRectF()
 
         self.setFlag(self.ItemHasNoContents)
