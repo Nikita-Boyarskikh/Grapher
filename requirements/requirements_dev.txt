@@ -1,0 +1,12 @@
+# virtualenv
+pbr==5.4.1
+six==1.12.0
+stevedore==1.30.1
+virtualenv==16.7.2
+virtualenv-clone==0.5.3
+
+# virtualenvwrapper
+virtualenvwrapper==4.8.4
+
+# PyQt5
+PyQt5-stubs==5.13.0.1
