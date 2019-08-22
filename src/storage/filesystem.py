@@ -5,15 +5,15 @@ from PyQt5.QtWidgets import QFileDialog, QApplication
 from storage import StorageBase
 from storage.exceptions import StorageError
 
-_ = partial(QApplication.translate, 'FileSystemStorageMixin')
+tr = QApplication.tr
 
 
 class FileSystemStorage(StorageBase):
-    def __init__(self, parent, serializer):
-        super().__init__(parent)
+    def __init__(self, serializer):
+        super().__init__()
         self.serializer = serializer
         self.extension = '.graph'
-        self.fileFilter = _('Graph (*{})'.format(self.extension))
+        self.fileFilter = tr('Graph (*{})'.format(self.extension))
         self.file_path = None
 
     def _read(self):
@@ -46,18 +46,15 @@ class FileSystemStorage(StorageBase):
         return self._check_filename()
 
     def new(self):
-        if self._getSaveFileName(_('Create new graph')):
+        if self._getSaveFileName(tr('Create new graph')):
             super().new()
 
     def open(self):
-        if self._getOpenFileName(_('Open graph')):
+        if self._getOpenFileName(tr('Open graph')):
             super().open()
 
     def saveAs(self):
         if self.opened:
-            if self._getSaveFileName(_('Save graph')):
+            if self._getSaveFileName(tr('Save graph')):
                 super().saveAs()
 
-    def close(self):
-        self.file_path = None
-        super().close()

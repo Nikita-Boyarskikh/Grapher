@@ -1,13 +1,13 @@
 from functools import partial
 
-from PyQt5.QtCore import Qt, QRectF, QLineF, QMimeData, QPoint, pyqtSignal, QMetaObject
-from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen
+from PyQt5.QtCore import Qt, QRectF, QLineF, QMimeData, QPoint, pyqtSignal, QMetaObject, QCoreApplication
+from PyQt5.QtGui import QDrag, QPixmap, QPainter, QPen, QPainterPath
 from PyQt5.QtWidgets import QApplication, QGraphicsObject
 
 from data import Node
 from ui.editor import NodePrompt
 
-_ = partial(QApplication.translate, 'Node')
+tr = QApplication.tr
 
 
 class NodeItem(QGraphicsObject):
@@ -24,6 +24,7 @@ class NodeItem(QGraphicsObject):
         self.isSelected = False
         self.isTaken = False
 
+        self.ellipse_rect = QRectF(-self.radius, -self.radius, self.diameter, self.diameter)
         self.setupUi()
 
     @property
@@ -45,6 +46,11 @@ class NodeItem(QGraphicsObject):
             self.diameter + self.labelHeight
         )
 
+    def shape(self) -> QPainterPath:
+        path = QPainterPath()
+        path.addEllipse(self.ellipse_rect)
+        return path
+
     def paint(self, painter, style_option_graphics_item, widget=None):
         if self.data.color is not None:
             painter.setBrush(self.data.color)
@@ -52,12 +58,11 @@ class NodeItem(QGraphicsObject):
         if self.isSelected and self.data.textColor:
             painter.setPen(QPen(self.data.textColor, self.borderWidth))
 
-        ellipse_rect = QRectF(-self.radius, -self.radius, self.diameter, self.diameter)
-        painter.drawEllipse(ellipse_rect)
+        painter.drawEllipse(self.ellipse_rect)
 
         if self.data.textColor is not None:
             painter.setPen(self.data.textColor)
-        painter.drawText(ellipse_rect, Qt.AlignCenter, str(self.data.id))
+        painter.drawText(self.ellipse_rect, Qt.AlignCenter, str(self.data.id))
 
         painter.setPen(Qt.black)
         painter.drawText(
@@ -105,7 +110,7 @@ class NodeItem(QGraphicsObject):
         elif event.button() == Qt.RightButton:
             self.prompt = NodePrompt(
                 parent=self.parentWidget(),
-                title=_('Edit node'),
+                title=tr('Edit node'),
                 accept=self.accept,
                 name=self.data.name,
                 weight=self.data.weight,

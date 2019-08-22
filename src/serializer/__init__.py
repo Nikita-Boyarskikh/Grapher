@@ -5,7 +5,6 @@ from PyQt5.QtGui import QColor
 
 from data import Node, Edge, Result, Graph
 from serializer.exceptions import NodeNotFound, EdgeNotFound, SerializerError
-from utils import throw, find
 
 
 class Serializer:
@@ -31,12 +30,6 @@ class Serializer:
     def _assert(condition, msg):
         if not condition:
             raise SerializerError(msg=msg)
-
-    def _find_node(self, node_id):
-        return find(self.data.nodes, lambda node: node.id == node_id) or throw(NodeNotFound(node_id))
-
-    def _find_edge(self, edge_id):
-        return find(self.data.edges, lambda edge: edge.id == edge_id) or throw(EdgeNotFound(edge_id))
 
     def serialize_node(self, node: Node) -> dict:
         assert isinstance(node, Node)
@@ -76,10 +69,10 @@ class Serializer:
         assert isinstance(self.data, Graph)
 
         obj = defaultdict(list)
-        for node in self.data.nodes:
+        for node in self.data.nodes.values():
             obj['nodes'].append(self.serialize_node(node))
 
-        for edge in self.data.edges:
+        for edge in self.data.edges.values():
             obj['edges'].append(self.serialize_edge(edge))
 
         for result in self.data.results:
@@ -112,8 +105,8 @@ class Serializer:
         end_node_id = self._get_or_raise(edge, 'Edge', 'end_node')
         length = self._get_or_raise(edge, 'Edge', 'length')
         speed = self._get_or_raise(edge, 'Edge', 'speed')
-        start_node = self._find_node(start_node_id)
-        end_node = self._find_node(end_node_id)
+        start_node = self.data.nodes[start_node_id]
+        end_node = self.data.nodes[end_node_id]
         offset = edge.get('offset')
         return Edge(id_, start_node, end_node, length, speed, offset=offset)
 
@@ -123,9 +116,9 @@ class Serializer:
         edge_id = result.get('edge')
 
         if node_id:
-            target = self._find_node(node_id)
+            target = self.data.nodes[node_id]
         elif edge_id:
-            target = self._find_edge(edge_id)
+            target = self.data.edges[edge_id]
         else:
             raise SerializerError(msg='Result object must contains key "node" or "edge"')
 
@@ -142,11 +135,13 @@ class Serializer:
         self._assert(isinstance(results_list, list), 'Results must be an array')
 
         self.data = Graph()
-        for node in nodes_list:
-            self.data.nodes.append(self.deserialize_node(node))
+        for node_obj in nodes_list:
+            node = self.deserialize_node(node_obj)
+            self.data.nodes[node.id] = node
 
-        for edge in edges_list:
-            self.data.edges.append(self.deserialize_edge(edge))
+        for edge_obj in edges_list:
+            edge = self.deserialize_edge(edge_obj)
+            self.data.edges[edge.id] = edge
 
         for result in results_list:
             self.data.results.append(self.deserialize_result(result))

@@ -17,6 +17,8 @@ pip3 install -r requirements/requirements.txt -r requirements/requirements_dev.t
 ### Packaging
 #### Debian based linux
 ```shell script
+./scripts/pyUIconvert.sh
+./scripts/translate.sh
 ./setup.py build
 ./setup.py bdist_msi
 ```

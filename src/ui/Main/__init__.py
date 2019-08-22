@@ -1,9 +1,12 @@
 from functools import partial
 
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QMainWindow, QApplication, QErrorMessage, QMessageBox, QInputDialog
+from PyQt5.QtWidgets import QMainWindow, QErrorMessage, QMessageBox, QInputDialog, QApplication
 
+from algorithms.exceptions import AlgorithmError
 from history import History
+from algorithms.absolute_center import AbsoluteCenter
+from algorithms.max_supply import MaxSupply
 from serializer import SerializerError
 from serializer.json import JsonSerializer
 from storage.exceptions import StorageError
@@ -12,13 +15,14 @@ from ui.about import About
 from ui.editor import GraphScene
 from .Main import Ui_Main
 
-_ = partial(QApplication.translate, 'Main')
+tr = QApplication.tr
 
 
+# TODO: Hot keys
 class Main(QMainWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.storage = FileSystemStorage(self, serializer=JsonSerializer())
+        self.storage = FileSystemStorage(serializer=JsonSerializer())
         self.history = History(self)
         self.ui = Ui_Main()
         self.scene = GraphScene(self)
@@ -31,13 +35,13 @@ class Main(QMainWindow):
 
     def handleError(self, title, msg):
         error_message = QErrorMessage(self)
-        error_message.setWindowTitle(_(title))
-        error_message.showMessage(_(msg))
+        error_message.setWindowTitle(tr(title))
+        error_message.showMessage(tr(msg))
 
     def shouldSave(self):
         if not self.history.clear:
-            title = _('Exit')
-            text = _('Are you sure you want to exit?\nAll changes will be lost')
+            title = tr('Exit')
+            text = tr('Are you sure you want to exit?\nAll changes will be lost')
             reply = QMessageBox.question(self, title, text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if reply == QMessageBox.No:
                 return True
@@ -45,13 +49,21 @@ class Main(QMainWindow):
 
     def showLimitDialog(self):
         limit, ok = QInputDialog.getDouble(
-            self, _('Input limit'), _('Limit: '),
+            self, tr('Input limit'), tr('Limit: '),
             value=0.0,
             min=0.0,
             decimals=2
         )
         if ok:
             return limit
+
+    def data_is_complete(self):
+        if not self.scene.data.nodes or not self.scene.data.edges:
+            title = tr('Graph is empty')
+            text = tr('You should create at least one node and at least one edge')
+            QMessageBox.warning(self, title, text)
+            return False
+        return True
 
     def closeEvent(self, event):
         event.accept()
@@ -64,18 +76,6 @@ class Main(QMainWindow):
         window_height = event.size().height() - self.ui.menuBar.size().height() - margins.top() - margins.bottom()
         self.scene.setSceneRect(0, 0, window_width, window_height)
         super().resizeEvent(event)
-
-    @pyqtSlot(bool)
-    def on_storage_openChanged(self, opened):
-        # TODO: WAT??? calls twice
-        self.ui.graphicsView.setEnabled(opened)
-        self.ui.actionSave.setEnabled(opened)
-        self.ui.actionSaveAs.setEnabled(opened)
-        self.ui.actionClose.setEnabled(opened)
-        self.ui.actionFind_absolute_center.setEnabled(opened)
-        self.ui.actionFind_optimal_position.setEnabled(opened)
-        self.scene.reset()
-        self.scene.setData(self.storage.data)
 
     @pyqtSlot()
     def on_actionNew_triggered(self):
@@ -92,6 +92,9 @@ class Main(QMainWindow):
         except SerializerError as e:
             self.handleError('Corrupted file', str(e))
 
+        self.scene.reset()
+        self.scene.setData(self.storage.data)
+
     @pyqtSlot()
     def on_actionSave_triggered(self):
         try:
@@ -104,11 +107,6 @@ class Main(QMainWindow):
     def on_actionSaveAs_triggered(self):
         self.storage.data = self.scene.data
         self.storage.saveAs()
-
-    @pyqtSlot()
-    def on_actionClose_triggered(self):
-        if not self.shouldSave():
-            self.storage.close()
 
     @pyqtSlot()
     def on_actionQuit_triggered(self):
@@ -124,21 +122,31 @@ class Main(QMainWindow):
 
     @pyqtSlot()
     def on_actionFind_absolute_center_triggered(self):
-        limit = self.showLimitDialog()
-        if limit is not None:
-            pass  # TODO
-            # results = findAbsoluteCenter(self.storage.data, limit)
-            # for result in results:
-            #     self.scene.addResult(result)
+        if self.data_is_complete():
+            limit = self.showLimitDialog()
+            if limit is not None:
+                try:
+                    results = AbsoluteCenter(self.scene.data, limit=limit).calc()
+                except AlgorithmError as e:
+                    return self.handleError(tr('Algorithm error'), tr(str(e)))
+
+                for result in results:
+                    self.scene.addResult(result)
+                self.scene.update()
 
     @pyqtSlot()
-    def on_actionFind_optimal_position_triggered(self):
-        limit = self.showLimitDialog()
-        if limit is not None:
-            pass  # TODO
-            # results = findOptimalPosition(self.storage.data, limit)
-            # for result in results:
-            #     self.scene.addResult(result)
+    def on_actionFind_max_supply_triggered(self):
+        if self.data_is_complete():
+            limit = self.showLimitDialog()
+            if limit is not None:
+                try:
+                    results = MaxSupply(self.scene.data, limit=limit).calc()
+                except AlgorithmError as e:
+                    return self.handleError(tr('Algorithm error'), tr(str(e)))
+
+                for result in results:
+                    self.scene.addResult(result)
+                self.scene.update()
 
     @pyqtSlot()
     def on_actionAbout_triggered(self):

@@ -2,12 +2,12 @@ from functools import partial
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QApplication, QDialog, QColorDialog
+from PyQt5.QtWidgets import QDialog, QColorDialog, QApplication
 
 from utils import reverseColor
 from .NodePrompt import Ui_NodePrompt
 
-_ = partial(QApplication.translate, 'Node Prompt')
+tr = QApplication.tr
 
 
 class NodePrompt(QDialog):
@@ -56,13 +56,13 @@ class NodePrompt(QDialog):
 
     @pyqtSlot()
     def on_currentColorPushButton_pressed(self):
-        color = QColorDialog.getColor(self.color, self, _('Select color'))
+        color = QColorDialog.getColor(self.color, self, tr('Select color'))
         if color.isValid():
             self.changeColor(color)
 
     @pyqtSlot()
     def on_currentTextColorPushButton_pressed(self):
-        color = QColorDialog.getColor(self.color, self, _('Select text color'))
+        color = QColorDialog.getColor(self.color, self, tr('Select text color'))
         if color.isValid():
             self.changeTextColor(color)
 
