@@ -17,9 +17,23 @@ pip3 install -r requirements/requirements.txt -r requirements/requirements_dev.t
 ### Packaging
 #### Debian based linux
 ```shell script
-./setup.py build
-./setup.py bdist_msi
+./scripts/pyUIconvert.sh
+./scripts/translate.sh
+./scripts/build.sh
 ```
 
 #### Windows
-TODO
+```shell script
+./scripts/build.sh
+```
+
+### TODOS
+* Help
+* Fix z-indexes
+* Fix edge number alignment
+* Editing edge
+* Deleting edge
+* History
+* Hot keys
+* Linter
+* Tests

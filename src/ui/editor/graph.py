@@ -31,3 +31,6 @@ class GraphItem(QGraphicsItem):
             node.x = cursor_position.x()
             node.y = cursor_position.y()
             self.scene().addNode(node)
+            for edge in self.scene().moving_edges:
+                self.scene().addEdge(edge)
+            self.scene().moving_edges.clear()

@@ -2,12 +2,12 @@ from functools import partial
 
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QApplication, QDialog, QColorDialog
+from PyQt5.QtWidgets import QDialog, QColorDialog, QApplication
 
 from utils import reverseColor
 from .EdgePrompt import Ui_EdgePrompt
 
-_ = partial(QApplication.translate, 'Edge Prompt')
+tr = partial(QApplication.translate, '@default')
 
 
 class EdgePrompt(QDialog):
@@ -43,7 +43,7 @@ class EdgePrompt(QDialog):
 
     @pyqtSlot()
     def on_currentColorPushButton_pressed(self):
-        color = QColorDialog.getColor(self.color, self, _('Select color'))
+        color = QColorDialog.getColor(self.color, self, tr('Select color'))
         if color.isValid():
             self.changeColor(color)
 

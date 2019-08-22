@@ -1,6 +1,7 @@
+import math
 from collections import defaultdict
 from functools import partial
-from typing import Optional
+from typing import Optional, Iterable
 
 from PyQt5.QtCore import Qt, QPointF
 from PyQt5.QtGui import QTransform
@@ -13,8 +14,9 @@ from ui.editor.edge import EdgeItem
 from ui.editor.node import NodeItem
 from ui.editor.graph import GraphItem
 from ui.editor.result import ResultItem
+from utils import composite_id, bezier
 
-_ = partial(QApplication.translate, 'Editor')
+tr = partial(QApplication.translate, '@default')
 
 
 class GraphScene(QGraphicsScene):
@@ -37,29 +39,27 @@ class GraphScene(QGraphicsScene):
         self.counter = 0
         self.edges_matrix = defaultdict(lambda: defaultdict(list))
         self.edges = {}
+        self.moving_edges = []
         self.selected_node = None
 
     def setData(self, data: Optional[Graph]):
         if data:
-            for edge in data.edges:
-                self.edges_matrix[edge.start_node.id][edge.end_node.id].append(edge)
-            for end_nodes in self.edges_matrix.values():
-                for edges in end_nodes.values():
-                    for edge in edges:
-                        self.addEdge(edge)
-            for node in data.nodes:
+            for edge in data.edges.values():
+                self.addEdge(edge)
+            for node in data.nodes.values():
                 self.addNode(node)
             for result in data.results:
                 self.addResult(result)
         self.update()
 
-    def iterEdgesByNode(self, node: Node):
-        for start_nodes in self.edges_matrix.values():
-            for edge in start_nodes[node.id]:
-                yield edge
+    def iterEdgesByNode(self, node: Node) -> Iterable[Edge]:
         for edges in self.edges_matrix[node.id].values():
             for edge in edges:
                 yield edge
+
+    def iterEdgesByNodes(self, start_node: Node, end_node: Node) -> Iterable[Edge]:
+        for edge in self.edges_matrix[start_node.id][end_node.id]:
+            yield edge
 
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -68,7 +68,12 @@ class GraphScene(QGraphicsScene):
                 self.showNodePrompt(partial(self.createNode, event.scenePos()))
             elif isinstance(item_under_cursor, NodeItem) and self.selected_node:
                 # do not pass release event to node if first node already selected, just create edge between
-                self.addEdgeByNode(item_under_cursor.data)
+                if item_under_cursor == self.selected_node:
+                    self.selected_node.isSelected = False
+                    self.selected_node.update()
+                    self.selected_node = None
+                else:
+                    self.addEdgeByNode(item_under_cursor.data)
             else:
                 super().mouseReleaseEvent(event)
         else:
@@ -79,14 +84,14 @@ class GraphScene(QGraphicsScene):
         self.graph.setRect(*args)
 
     def showNodePrompt(self, accept):
-        self.nodePrompt = NodePrompt(self.parent(), _('Create node'), accept)
+        self.nodePrompt = NodePrompt(self.parent(), tr('Create node'), accept)
         self.nodePrompt.show()
 
     def createNode(self, position):
         node_id = self.uid
         node = Node(
             id=node_id,
-            name=self.nodePrompt.name or _('Node {}').format(node_id),
+            name=self.nodePrompt.name or tr('Node {}').format(node_id),
             x=position.x(),
             y=position.y(),
             weight=self.nodePrompt.weight,
@@ -101,7 +106,7 @@ class GraphScene(QGraphicsScene):
         self.addNode(node)
 
     def addNode(self, node: Node):
-        self.data.nodes.append(node)
+        self.data.nodes[node.id] = node
         ui_node = NodeItem(self.graph, node)
         self.addItem(ui_node)
         ui_node.setPos(node.x, node.y)
@@ -122,8 +127,9 @@ class GraphScene(QGraphicsScene):
         self.edgePrompt.show()
 
     def createEdge(self, start_node: Node, end_node: Node):
+        index = len(self.edges_matrix[start_node.id][end_node.id])
         edge = Edge(
-            id=self.uid,
+            id=composite_id(start_node.id, end_node.id, index),
             start_node=start_node,
             end_node=end_node,
             length=self.edgePrompt.length,
@@ -134,18 +140,31 @@ class GraphScene(QGraphicsScene):
         self.addEdge(edge)
 
     def addEdge(self, edge: Edge):
-        # TODO: Fix from end to start edges
         edges_between_these_nodes = self.edges_matrix[edge.start_node.id][edge.end_node.id]
+        total = len(edges_between_these_nodes)
+        if edge not in edges_between_these_nodes:
+            total += 1
+
+        # Recreate edges with new total
+        for i, edge_between_these_nodes in enumerate(edges_between_these_nodes):
+            edge_item = self.edges[edge_between_these_nodes.id]
+            self.removeItem(edge_item)
+            self.addEdgeItem(edge_between_these_nodes, i, total)
+
+        # Get new index
         if edge in edges_between_these_nodes:
             index = edges_between_these_nodes.index(edge)
         else:
             index = len(edges_between_these_nodes)
-            edges_between_these_nodes.append(edge)
+            self.edges_matrix[edge.start_node.id][edge.end_node.id].append(edge)
+            self.edges_matrix[edge.end_node.id][edge.start_node.id].append(edge)
 
-        curve = (2 * (index % 2) - 1) * ((index + 1) // 2) / len(edges_between_these_nodes)
+        # Create edge
+        self.data.edges[edge.id] = edge
+        self.addEdgeItem(edge, index, total)
 
-        self.data.edges.append(edge)
-        ui_edge = EdgeItem(self.graph, edge, curve)
+    def addEdgeItem(self, edge: Edge, index: int, total: int):
+        ui_edge = EdgeItem(self.graph, edge, index, total)
         self.addItem(ui_edge)
         ui_edge.setPos(edge.start_node.x, edge.start_node.y)
         self.edges[edge.id] = ui_edge
@@ -154,12 +173,38 @@ class GraphScene(QGraphicsScene):
         self.data.results.append(result)
         ui_result = ResultItem(self.graph, result)
         self.addItem(ui_result)
-        ui_result.setPos(result.target.x, result.target.y)
+        if isinstance(result.target, Node):
+            ui_result.setPos(result.target.x, result.target.y)
+        else:
+            ui_edge = self.edges[result.target.id]
+            start_point = QPointF(result.target.start_node.x, result.target.start_node.y)
+            end_point = QPointF(result.target.end_node.x, result.target.end_node.y)
+            offset = result.target.offset or 0
+            if result.target.length:
+                offset /= result.target.length
+
+            position = bezier(start_point, end_point, start_point + ui_edge.quad_center, offset)
+            ui_result.setPos(position)
+
+    def clearResults(self):
+        self.data.results.clear()
+        for item in self.items():
+            if isinstance(item, ResultItem):
+                self.removeItem(item)
+        self.update()
 
     def on_node_taken(self, node: NodeItem):
-        for edge in self.iterEdgesByNode(node.data):
+        self.moving_edges.clear()
+        self.clearResults()
+        del self.data.nodes[node.data.id]
+        for edge in list(self.iterEdgesByNode(node.data)):
             edge_item = self.edges[edge.id]
             self.removeItem(edge_item)
+            del self.edges[edge.id]
+            del self.data.edges[edge.id]
+            self.edges_matrix[edge.start_node.id][edge.end_node.id].remove(edge)
+            self.edges_matrix[edge.end_node.id][edge.start_node.id].remove(edge)
+            self.moving_edges.append(edge)
 
     def on_node_selected(self, node_item: NodeItem, selected: bool):
         if selected:

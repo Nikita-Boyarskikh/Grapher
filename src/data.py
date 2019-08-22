@@ -17,7 +17,7 @@ class Node:
 
 @dataclass
 class Edge:
-    id: int
+    id: str
     start_node: Node
     end_node: Node
     length: float
@@ -33,6 +33,6 @@ class Result:
 
 @dataclass
 class Graph:
-    nodes: list = field(default_factory=list)
-    edges: list = field(default_factory=list)
+    nodes: dict = field(default_factory=dict)
+    edges: dict = field(default_factory=dict)
     results: list = field(default_factory=list)

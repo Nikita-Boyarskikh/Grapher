@@ -17,9 +17,6 @@
    <string>Grapher</string>
   </property>
   <widget class="QGraphicsView" name="graphicsView">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="mouseTracking">
     <bool>true</bool>
    </property>
@@ -42,7 +39,6 @@
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
-    <addaction name="actionClose"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -63,7 +59,7 @@
      <string>Run</string>
     </property>
     <addaction name="actionFind_absolute_center"/>
-    <addaction name="actionFind_optimal_position"/>
+    <addaction name="actionFind_max_supply"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -71,16 +67,8 @@
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionSaveAs">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>Save as...</string>
-   </property>
-  </action>
-  <action name="actionLoad">
-   <property name="text">
-    <string>Load...</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -94,19 +82,8 @@
    </property>
   </action>
   <action name="actionSave">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>Save</string>
-   </property>
-  </action>
-  <action name="actionClose">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Close</string>
    </property>
   </action>
   <action name="actionQuit">
@@ -130,19 +107,13 @@
    </property>
   </action>
   <action name="actionFind_absolute_center">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>Find absolute center</string>
    </property>
   </action>
-  <action name="actionFind_optimal_position">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
+  <action name="actionFind_max_supply">
    <property name="text">
-    <string>Find optimal position</string>
+    <string>Find maximal supply</string>
    </property>
   </action>
  </widget>
