@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication, QGraphicsObject
 from data import Node
 from ui.editor import NodePrompt
 
-tr = QApplication.tr
+tr = partial(QApplication.translate, '@default')
 
 
 class NodeItem(QGraphicsObject):

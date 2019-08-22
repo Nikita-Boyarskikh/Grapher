@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QDialog, QColorDialog, QApplication
 from utils import reverseColor
 from .NodePrompt import Ui_NodePrompt
 
-tr = QApplication.tr
+tr = partial(QApplication.translate, '@default')
 
 
 class NodePrompt(QDialog):

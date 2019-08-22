@@ -17,3 +17,4 @@ libffi-dev
 liblzma-dev
 python-openssl
 git
+qt5-default

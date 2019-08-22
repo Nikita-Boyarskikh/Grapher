@@ -1,8 +1,9 @@
+import math
 from collections import defaultdict
 from functools import partial
 from typing import Optional, Iterable
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPointF
 from PyQt5.QtGui import QTransform
 from PyQt5.QtWidgets import QGraphicsScene, QApplication
 
@@ -13,9 +14,9 @@ from ui.editor.edge import EdgeItem
 from ui.editor.node import NodeItem
 from ui.editor.graph import GraphItem
 from ui.editor.result import ResultItem
-from utils import composite_id
+from utils import composite_id, bezier
 
-tr = QApplication.tr
+tr = partial(QApplication.translate, '@default')
 
 
 class GraphScene(QGraphicsScene):
@@ -172,7 +173,18 @@ class GraphScene(QGraphicsScene):
         self.data.results.append(result)
         ui_result = ResultItem(self.graph, result)
         self.addItem(ui_result)
-        ui_result.setPos(result.target.x, result.target.y)
+        if isinstance(result.target, Node):
+            ui_result.setPos(result.target.x, result.target.y)
+        else:
+            ui_edge = self.edges[result.target.id]
+            start_point = QPointF(result.target.start_node.x, result.target.start_node.y)
+            end_point = QPointF(result.target.end_node.x, result.target.end_node.y)
+            offset = result.target.offset or 0
+            if result.target.length:
+                offset /= result.target.length
+
+            position = bezier(start_point, end_point, start_point + ui_edge.quad_center, offset)
+            ui_result.setPos(position)
 
     def clearResults(self):
         self.data.results.clear()

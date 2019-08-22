@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QFileDialog, QApplication
 from storage import StorageBase
 from storage.exceptions import StorageError
 
-tr = QApplication.tr
+tr = partial(QApplication.translate, '@default')
 
 
 class FileSystemStorage(StorageBase):
@@ -47,14 +47,18 @@ class FileSystemStorage(StorageBase):
 
     def new(self):
         if self._getSaveFileName(tr('Create new graph')):
-            super().new()
+            return super().new()
 
     def open(self):
         if self._getOpenFileName(tr('Open graph')):
-            super().open()
+            return super().open()
 
     def saveAs(self):
-        if self.opened:
-            if self._getSaveFileName(tr('Save graph')):
-                super().saveAs()
+        if self._getSaveFileName(tr('Save graph')):
+            self.opened = True
+            return super().saveAs()
 
+    def save(self):
+        if not self.opened:
+            return self.saveAs()
+        return super().save()

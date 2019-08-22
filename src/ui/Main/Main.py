@@ -59,7 +59,6 @@ class Ui_Main(object):
         self.menuHelp.addAction(self.actionAbout)
         self.menuRun.addAction(self.actionFind_absolute_center)
         self.menuRun.addAction(self.actionFind_max_supply)
-        self.menuRun.addAction(Main.actionClear)
         self.menuBar.addAction(self.menuFile.menuAction())
         self.menuBar.addAction(self.menuEdit.menuAction())
         self.menuBar.addAction(self.menuRun.menuAction())

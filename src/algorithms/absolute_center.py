@@ -1,7 +1,8 @@
+# TODO: refactor it
+
 import sys
 from dataclasses import dataclass
 
-import numpy as np
 import math
 
 from algorithms import Algorithm
@@ -36,23 +37,22 @@ class AbsoluteCenter(Algorithm):
 
     def _find_abs_node_centers(self):
         """
-        Returns list with potential node centers
+        Yield potential node centers
         """
 
         if self.matrix_short_dist is None:
             self._algo_floid()
-        return list(np.amax(self.matrix_short_dist, 0))
+        return (max(self.matrix_short_dist, key=lambda x: x[i])[i] for i, _ in enumerate(self.matrix_short_dist[0]))
 
     def _find_abs_edge_centers(self):
         """
-        Returns array of edge centers
+        Yield edge centers
         as [(edge_length, shift_from_first_node, index_first_node, index_second_node)]
         """
 
         if self.matrix_short_dist is None:
             self._algo_floid()
 
-        arr_min_rib = []
         edge_shift_from_first_point = 0
 
         for k in range(0, len(self.distance_matrix)):
@@ -63,10 +63,15 @@ class AbsoluteCenter(Algorithm):
                     if self.distance_matrix[k][i][index_of_list_edges_ki] == inf:
                         continue
                     distance_to_farthest_point = inf
-                    for f in np.arange(0.1, 1, 0.1):
+                    for f in range(1, 10):
+                        f *= 0.1  # iterate over 0.1 to 1.0 by 0.1
                         max_len_rib = -1
                         for j in range(0, len(self.distance_matrix)):
-                            current_min = min(f * self.distance_matrix[k][i][index_of_list_edges_ki] + self.matrix_short_dist[k][j], (1 - f) * self.distance_matrix[k][i][index_of_list_edges_ki] +  self.matrix_short_dist[i][j])
+                            current_min = min(
+                                f * self.distance_matrix[k][i][index_of_list_edges_ki] + self.matrix_short_dist[k][j],
+                                (1 - f) * self.distance_matrix[k][i][index_of_list_edges_ki]
+                                + self.matrix_short_dist[i][j]
+                            )
                             if max_len_rib < current_min:
                                 max_len_rib = current_min
 
@@ -74,11 +79,16 @@ class AbsoluteCenter(Algorithm):
                             distance_to_farthest_point = max_len_rib
                             edge_shift_from_first_point = f * self.distance_matrix[k][i][index_of_list_edges_ki]
 
-                    self.node_indexes
-                    edge = self.data.edges[composite_id()]
+                    start_node_id, end_node_id = 0, 0
+                    for node_id, node_index in self.node_indexes.items():
+                        if node_index == k:
+                            start_node_id = node_id
+                        if node_index == i:
+                            end_node_id = node_id
+                    edge = self.data.edges.get(composite_id(start_node_id, end_node_id, index_of_list_edges_ki)) or \
+                        self.data.edges.get(composite_id(end_node_id, start_node_id, index_of_list_edges_ki))
                     edge.offset = edge_shift_from_first_point
-                    arr_min_rib.append(Result(edge, distance_to_farthest_point))
-        return arr_min_rib
+                    yield Result(edge, distance_to_farthest_point)
 
     def _list_of_nodes_to_bit_mask(self, nodes):
         length = len(self.distance_matrix)
@@ -167,7 +177,7 @@ class AbsoluteCenter(Algorithm):
                     else:
                         self.segments_array[0].append([self.points_on_limit[i][0], self.points_on_limit[i][1], self.points_on_limit[i][2], 0, self.points_on_limit[j][3], bit_mask_nodes])
 
-        while (len(self.segments_array[-1]) > 1):
+        while len(self.segments_array[-1]) > 1:
             self.segments_array.append([])
             matrix_of_bools = [[False for j in range(0, len(self.segments_array[-2]))] for i in range(0, len(self.segments_array[-2]))]
             for i in range(0, len(self.segments_array[-2])):
@@ -189,8 +199,6 @@ class AbsoluteCenter(Algorithm):
                         self.segments_array[-2][i][1] == self.segments_array[-2][j][1])
                         ):
 
-                        segment_first = 0
-                        segment_second = 0
                         distt_1_1 = self.segments_array[-2][i][3]
                         distt_1_2 = self.segments_array[-2][i][4]
                         if (self.segments_array[-2][i][0] == self.segments_array[-2][j][0]):
@@ -227,16 +235,16 @@ class AbsoluteCenter(Algorithm):
         all_nodes_bit = 2 ** len(self.distance_matrix) - 1
 
         arr_segments = []
-        for i in range(0, len(self.segments_array)):
-            arr_segments += self.segments_array[i]
+        for segment in self.segments_array:
+            arr_segments += segment
         arr_segments.sort(key=lambda x: x[-1], reverse=True)
 
         arr_segments_res = []
         nodes_bit = 0
-        for i in range(0, len(arr_segments)):
-            if nodes_bit | arr_segments[i][5] != nodes_bit:
-                nodes_bit |= arr_segments[i][5]
-                arr_segments_res.append(arr_segments[i])
+        for segment in arr_segments:
+            if nodes_bit | segment[5] != nodes_bit:
+                nodes_bit |= segment[5]
+                arr_segments_res.append(segment)
             if nodes_bit & all_nodes_bit == all_nodes_bit:
                 return arr_segments_res
 
@@ -247,10 +255,9 @@ class AbsoluteCenter(Algorithm):
         """
         Find absolute centers
         """
-        results = []
         if not self.limit:
-            edges = self._find_abs_edge_centers()
-            nodes = self._find_abs_node_centers()
+            edges = list(self._find_abs_edge_centers())
+            nodes = list(self._find_abs_node_centers())
             min_node_score = min(nodes)
             min_edge_score = min(edge.score for edge in edges)
 
@@ -259,25 +266,22 @@ class AbsoluteCenter(Algorithm):
                     score = nodes[node_index]
                     if math.fabs(score - min_node_score) < self.precision:
                         node = self.data.nodes[node_id]
-                        results.append(Result(node, score))
-                return results
+                        yield Result(node, score)
             else:
-                # distance_to_farthest_point = 0,
-                # first_edge_shift_from_first_point = 0,
-                # second_edge_shift_from_first_point = 0,
-                # first_point = 0,
-                # second_point = 0,
-                # index_of_list_edges_ki = 0
-                return [Result(x[0], x[1], x[1], x[2], x[3], x[4]) for i, x in enumerate(edges) if math.fabs(x[0] - min_edge_score) < self.precision]
+                for edge in edges:
+                    if math.fabs(edge.score - min_edge_score) < self.precision:
+                        yield edge
         else:
             best_segments = self.find_best_segments()
             if best_segments:
-                # distance_to_farthest_point = 0,
-                # first_edge_shift_from_first_point = 0,
-                # second_edge_shift_from_first_point = 0,
-                # first_point = 0,
-                # second_point = 0,
-                # index_of_list_edges_ki = 0
-                res = [Result(self.limit, x[3], x[4], x[0], x[1], x[2]) for x in best_segments]
-                return results
-        return results
+                for node_id, node_index in list(self.node_indexes.items())[:len(best_segments)]:
+                    segment = best_segments[node_index]
+                    for node_id, node_index in self.node_indexes.items():
+                        if node_index == segment[0]:
+                            start_node_id = node_id
+                        if node_index == segment[1]:
+                            end_node_id = node_id
+                    edge = self.data.edges.get(composite_id(start_node_id, end_node_id, segment[2])) or \
+                        self.data.edges.get(composite_id(end_node_id, start_node_id, segment[2]))
+                    edge.offset = min(segment[3], segment[4])  # TODO: Think about how to display it
+                    yield Result(edge, self.limit)

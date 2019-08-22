@@ -60,7 +60,6 @@
     </property>
     <addaction name="actionFind_absolute_center"/>
     <addaction name="actionFind_max_supply"/>
-    <addaction name="actionClear"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>

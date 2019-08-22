@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QMessageBox, QApplication
 
 from utils.html import p, link, ul, li
 
-tr = QApplication.tr
+tr = partial(QApplication.translate, '@default')
 
 
 class About:
@@ -14,10 +14,10 @@ class About:
     def show(self):
         title = tr('About')
         authors_with_emails = {
-            'Nikita Boyarskikh': 'N02@yandex.ru',
-            'Zabava Alexey': 'zabava.alex@gmail.com',
-            'Lee Daniil': 'leedaniil98@gmail.com',
-            'Spasenov Ivan': 'spasenovivan@mail.ru'
+            tr('Nikita Boyarskikh'): 'N02@yandex.ru',
+            tr('Zabava Alexey'): 'zabava.alex@gmail.com',
+            tr('Lee Daniil'): 'chuvag01@gmail.com',
+            tr('Spasenov Ivan'): 'spasenovivan@mail.ru'
         }
 
         text = p(tr('Created by:\n'))

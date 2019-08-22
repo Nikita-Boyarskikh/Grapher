@@ -96,6 +96,26 @@ All changes will be lost</source>
         <source>Create node</source>
         <translation>Создание узла</translation>
     </message>
+    <message>
+        <location filename="../src/ui/about.py" line="17"/>
+        <source>Nikita Boyarskikh</source>
+        <translation>Никита Боярских</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/about.py" line="18"/>
+        <source>Zabava Alexey</source>
+        <translation>Забава Алексей</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/about.py" line="19"/>
+        <source>Lee Daniil</source>
+        <translation>Ли Даниил</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/about.py" line="20"/>
+        <source>Spasenov Ivan</source>
+        <translation>Спасёнов Иван</translation>
+    </message>
 </context>
 <context>
     <name>EdgePrompt</name>
@@ -128,77 +148,77 @@ All changes will be lost</source>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="73"/>
+        <location filename="../src/ui/Main/Main.py" line="72"/>
         <source>Grapher</source>
         <translation>Графер</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="74"/>
+        <location filename="../src/ui/Main/Main.py" line="73"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="75"/>
+        <location filename="../src/ui/Main/Main.py" line="74"/>
         <source>Edit</source>
         <translation>Правка</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="76"/>
+        <location filename="../src/ui/Main/Main.py" line="75"/>
         <source>Help</source>
         <translation>Помощь</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="77"/>
+        <location filename="../src/ui/Main/Main.py" line="76"/>
         <source>Run</source>
         <translation>Запуск</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="78"/>
+        <location filename="../src/ui/Main/Main.py" line="77"/>
         <source>Save as...</source>
         <translation>Сохранить как...</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="79"/>
+        <location filename="../src/ui/Main/Main.py" line="78"/>
         <source>Open...</source>
         <translation>Открыть...</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="80"/>
+        <location filename="../src/ui/Main/Main.py" line="79"/>
         <source>New...</source>
         <translation>Новый...</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="81"/>
+        <location filename="../src/ui/Main/Main.py" line="80"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="82"/>
+        <location filename="../src/ui/Main/Main.py" line="81"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="83"/>
+        <location filename="../src/ui/Main/Main.py" line="82"/>
         <source>Undo</source>
         <translation>Отменить</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="84"/>
+        <location filename="../src/ui/Main/Main.py" line="83"/>
         <source>Redo</source>
         <translation>Повторить</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="85"/>
+        <location filename="../src/ui/Main/Main.py" line="84"/>
         <source>About</source>
         <translation>О программе</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="86"/>
+        <location filename="../src/ui/Main/Main.py" line="85"/>
         <source>Find absolute center</source>
         <translation>Поиск абсолютного центра</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="87"/>
+        <location filename="../src/ui/Main/Main.py" line="86"/>
         <source>Find maximal supply</source>
         <translation>Поиск точки наибольших поставок</translation>
     </message>

@@ -15,7 +15,7 @@ from ui.about import About
 from ui.editor import GraphScene
 from .Main import Ui_Main
 
-tr = QApplication.tr
+tr = partial(QApplication.translate, '@default')
 
 
 # TODO: Hot keys
@@ -79,8 +79,8 @@ class Main(QMainWindow):
 
     @pyqtSlot()
     def on_actionNew_triggered(self):
-        if not self.shouldSave():
-            self.storage.new()
+        if not self.shouldSave() and self.storage.new():
+            self.scene.reset()
 
     @pyqtSlot()
     def on_actionOpen_triggered(self):
@@ -127,12 +127,12 @@ class Main(QMainWindow):
             if limit is not None:
                 try:
                     results = AbsoluteCenter(self.scene.data, limit=limit).calc()
+                    self.scene.clearResults()
+                    for result in results:
+                        self.scene.addResult(result)
+                    self.scene.update()
                 except AlgorithmError as e:
                     return self.handleError(tr('Algorithm error'), tr(str(e)))
-
-                for result in results:
-                    self.scene.addResult(result)
-                self.scene.update()
 
     @pyqtSlot()
     def on_actionFind_max_supply_triggered(self):
@@ -141,12 +141,12 @@ class Main(QMainWindow):
             if limit is not None:
                 try:
                     results = MaxSupply(self.scene.data, limit=limit).calc()
+                    self.scene.clearResults()
+                    for result in results:
+                        self.scene.addResult(result)
+                    self.scene.update()
                 except AlgorithmError as e:
                     return self.handleError(tr('Algorithm error'), tr(str(e)))
-
-                for result in results:
-                    self.scene.addResult(result)
-                self.scene.update()
 
     @pyqtSlot()
     def on_actionAbout_triggered(self):

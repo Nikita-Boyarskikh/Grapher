@@ -96,6 +96,26 @@ All changes will be lost</translation>
         <source>Save graph</source>
         <translation>Save graph</translation>
     </message>
+    <message>
+        <location filename="../src/ui/about.py" line="17"/>
+        <source>Nikita Boyarskikh</source>
+        <translation>Nikita Boyarskikh</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/about.py" line="18"/>
+        <source>Zabava Alexey</source>
+        <translation>Zabava Alexey</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/about.py" line="19"/>
+        <source>Lee Daniil</source>
+        <translation>Lee Daniil</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/about.py" line="20"/>
+        <source>Spasenov Ivan</source>
+        <translation>Spasenov Ivan</translation>
+    </message>
 </context>
 <context>
     <name>EdgePrompt</name>
@@ -128,77 +148,77 @@ All changes will be lost</translation>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="73"/>
+        <location filename="../src/ui/Main/Main.py" line="72"/>
         <source>Grapher</source>
         <translation>Grapher</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="74"/>
+        <location filename="../src/ui/Main/Main.py" line="73"/>
         <source>File</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="75"/>
+        <location filename="../src/ui/Main/Main.py" line="74"/>
         <source>Edit</source>
         <translation>Edit</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="76"/>
+        <location filename="../src/ui/Main/Main.py" line="75"/>
         <source>Help</source>
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="77"/>
+        <location filename="../src/ui/Main/Main.py" line="76"/>
         <source>Run</source>
         <translation>Run</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="78"/>
+        <location filename="../src/ui/Main/Main.py" line="77"/>
         <source>Save as...</source>
         <translation>Save as...</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="79"/>
+        <location filename="../src/ui/Main/Main.py" line="78"/>
         <source>Open...</source>
         <translation>Open...</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="80"/>
+        <location filename="../src/ui/Main/Main.py" line="79"/>
         <source>New...</source>
         <translation>New...</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="81"/>
+        <location filename="../src/ui/Main/Main.py" line="80"/>
         <source>Save</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="82"/>
+        <location filename="../src/ui/Main/Main.py" line="81"/>
         <source>Quit</source>
         <translation>Quit</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="83"/>
+        <location filename="../src/ui/Main/Main.py" line="82"/>
         <source>Undo</source>
         <translation>Undo</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="84"/>
+        <location filename="../src/ui/Main/Main.py" line="83"/>
         <source>Redo</source>
         <translation>Redo</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="85"/>
+        <location filename="../src/ui/Main/Main.py" line="84"/>
         <source>About</source>
         <translation>About</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="86"/>
+        <location filename="../src/ui/Main/Main.py" line="85"/>
         <source>Find absolute center</source>
         <translation>Find absolute center</translation>
     </message>
     <message>
-        <location filename="../src/ui/Main/Main.py" line="87"/>
+        <location filename="../src/ui/Main/Main.py" line="86"/>
         <source>Find maximal supply</source>
         <translation>Find maximal supply</translation>
     </message>

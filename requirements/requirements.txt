@@ -2,8 +2,7 @@
 PyQt5==5.13.0
 PyQt5-sip==4.19.18
 
-# numpy
-numpy==1.17.0
-
-# cx_Freeze
-cx_Freeze==5.1.1
+# pyinstaller
+pyinstaller==3.5
+altgraph==0.16.1
+setuptools==41.0.1

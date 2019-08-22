@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QDialog, QColorDialog, QApplication
 from utils import reverseColor
 from .EdgePrompt import Ui_EdgePrompt
 
-tr = QApplication.tr
+tr = partial(QApplication.translate, '@default')
 
 
 class EdgePrompt(QDialog):

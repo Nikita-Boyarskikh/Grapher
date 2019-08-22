@@ -1,5 +1,4 @@
 import math
-import sys
 from functools import partial
 
 from PyQt5.QtCore import Qt, QPointF, QRectF, QSizeF
@@ -7,8 +6,9 @@ from PyQt5.QtGui import QPainterPath, QFontMetrics, QFont
 from PyQt5.QtWidgets import QGraphicsLineItem, QWidget, QApplication
 
 from data import Edge
+from utils import bezier
 
-tr = QApplication.tr
+tr = partial(QApplication.translate, '@default')
 
 
 class EdgeItem(QGraphicsLineItem):
@@ -62,7 +62,10 @@ class EdgeItem(QGraphicsLineItem):
         metrics = QFontMetrics(font)
         height = metrics.height()
         width = metrics.width(self.label)
-        return QRectF(self.quad_center or self.center, QSizeF(width, height))
+        if self.quad_center:
+            position = bezier(self.line().p1(), self.line().p2(), self.quad_center, 0.5)
+            return QRectF(position, QSizeF(width, height))
+        return QRectF(self.center, QSizeF(width, height))
 
     def paint(self, painter, option, widget=None):
         painter.setPen(Qt.black)

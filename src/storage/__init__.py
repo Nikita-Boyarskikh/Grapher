@@ -15,15 +15,19 @@ class StorageBase:
     def save(self):
         if self.opened:
             self._write()
+        return self.opened
 
     def saveAs(self):
         if self.opened:
-            self.save()
+            return self.save()
+        return self.opened
 
     def open(self):
         self.opened = True
         self._read()
+        return self.opened
 
     def new(self):
         self.opened = True
         self.data = Graph()
+        return self.opened

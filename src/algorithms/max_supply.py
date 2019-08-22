@@ -77,9 +77,7 @@ class MaxSupply(Algorithm):
         Find absolute centers
         """
         res, res_arr = self.find_best_medians()
-        results = []
         for node_id, node_index in self.node_indexes.items():
             if node_index in res_arr:
                 node = self.data.nodes[node_id]
-                results.append(Result(node, res))
-        return results
+                yield Result(node, res)
